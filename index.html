@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Сайт с плашкой</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Фон страницы */
+    body {
+      margin: 0;
+      padding: 0;
+      background: url("https://media1.giphy.com/media/v1.Y2lkPTZjMDliOTUydXJzc3ZkdDU3YnM2Y2treXAwanllM2tuNXBleG91YzQwNm44Zjd0NSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/k8kITi9SAwe9JWbUaH/200w.gif") no-repeat center center fixed;
+      background-size: cover;
+      font-family: monospace;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start; /* плашка сверху */
+      min-height: 100vh;
+    }
+
+  span.highlight {
+  display: block;       /* превращаем в блочный элемент, чтобы margin работал */
+  font-weight: bold;    /* жирный текст */
+  margin-top: 3px;     /* небольшой отступ сверху */
+  margin-bottom: 3px;  /* небольшой отступ снизу */
+}
+
+a {
+  color: #922929;       /* цвет ссылки */
+  text-decoration: none; /* убрать подчеркивание */
+  font-weight: bold;     /* жирный текст */
+}
+  
+    /* Плашка */
+    .overlay {
+      padding: 20px 0px; /* внутренние отступы */
+      background-color: #201a1a;
+      position: relative;
+      margin-top: 0px; /* отступ сверху от body */
+      width: 700px; /* ширина плашки */
+      max-width: 800px; /* ограничение по ширине */
+      background-color: #201716;
+      font-family: 'Courier New' monospace; /* поменять шрифт */
+      color: #cf7272; /* цвет текста */
+      border-left: 2px solid #cf7272;   /* левая граница */
+      border-right: 2px solid #cf7272;  /* правая граница */
+      box-sizing: border-box;
+       font-size: 15px;
+       height: 1000px; /* пример высоты */
+       
+    }
+
+    /* Заголовок <hi1> сверху с отступом */
+    .overlay hi1 {
+     
+      position: absolute;
+      top: 20px;
+      left: 35%; /* по центру горизонтали */
+      margin: 0;
+      text-align: center;
+      position: absolute;
+      left: 50%;
+       transform: translate(-50%, -50%); /* точный центр */
+       margin: 0;
+       text-align: center
+      
+    }
+
+    txt1 {
+  display: block;   /* делает элемент блочным */
+  margin: 0px 0px;   /* отступы сверху и снизу */
+  text-align: left; /* выравнивание текста */
+}
+
+
+    /* Основной текст слева */
+    .overlay txt1 {
+      margin-top: 20px; /* чтобы текст не накладывался на заголовок */
+      text-align: left;
+      display: block;
+      padding-left: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <hi1>lftq // laftiq // laft</hi1>
+    <txt1>
+      hiii yo 
+      
+    </txt1>
+    <txt1>
+      i am borya aka <strong>laft</strong> aka laptos &#9752; <br>
+      not developer and not designer <br>
+      just 10th grade student from russia. 
+    </txt1>
+
+    <txt1>
+      <span class="highlight">rlly interesting shit bout me:</span> bday:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 06//11//20XX <br> cntry:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; russia &#127479;&#127482; <br> fav music :&nbsp;&nbsp; underground rap, breakcore. <br>
+      fav tv shows: rik and morty, breaking bad <br>
+      fav food: &nbsp;&nbsp;&nbsp;&nbsp;who cares lol <br>
+      hobbies:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;drums, guitar, design(no), a lot of cool stuff <br>
+      philosophy:&nbsp;&nbsp;&nbsp;fuck philosophy. tech sciences on top
+    </txt1>
+    <txt1>
+    <span class="highlight">where u can find me:</span>
+      telegram:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://t.me/laftik" target="_blank">@laftik</a> <br>
+      discrord:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://discord.com/users/698974920314454026" target="_blank">@laftq</a> <br>
+      gmail(why):&nbsp;&nbsp;&nbsp;borispopovsamp@gmail.com
+
+    </txt1>
+    <txt1>
+      <br> <br> <br> <br> <br> it will be something below later i think yo
+    </txt1>
+  </div>
+</body>
+ 
+</html>
