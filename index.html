@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Сайт с плашкой</title>
+  <title>laftq.шетемеле</title>
   <link rel="stylesheet" href="style.css">
   <style>
     /* Фон страницы */
@@ -25,12 +25,35 @@
   margin-bottom: 3px;  /* небольшой отступ снизу */
 }
 
+
+
 a {
   color: #922929;       /* цвет ссылки */
   text-decoration: none; /* убрать подчеркивание */
   font-weight: bold;     /* жирный текст */
 }
-  
+ .corner-gif {
+  position: absolute;  /* абсолютное позиционирование внутри .overlay */
+  top: 40px;           /* отступ сверху */
+  right: 40px;         /* отступ справа */
+  width: 100px;         /* ширина GIF */
+  height: auto;        /* сохраняем пропорции */
+  border-radius: 5px;  /* если хочешь скруглить уголки */
+}
+
+ .corner-ascii {
+  position: absolute;
+  top: 10px;   /* отступ сверху */
+  right: 10px; /* отступ справа */
+  font-size: 14px; /* размер "символов" */
+  line-height: 14px; /* высота строки для правильного вида */
+  color: #cf7272;   /* цвет ASCII */
+  text-align: left;
+  white-space: pre; /* сохраняем пробелы и переносы */
+  font-family: 'Courier New' monospace;
+}
+
+
     /* Плашка */
     .overlay {
       padding: 20px 0px; /* внутренние отступы */
@@ -47,7 +70,7 @@ a {
       box-sizing: border-box;
        font-size: 15px;
        height: 1000px; /* пример высоты */
-       
+      
     }
 
     /* Заголовок <hi1> сверху с отступом */
@@ -73,6 +96,7 @@ a {
 }
 
 
+
     /* Основной текст слева */
     .overlay txt1 {
       margin-top: 20px; /* чтобы текст не накладывался на заголовок */
@@ -84,6 +108,40 @@ a {
 </head>
 <body>
   <div class="overlay">
+     <pre class="corner-ascii">
+                    '
+            *          .
+                   *       '
+              *                *
+
+
+
+
+
+   *   '*
+           *
+                *
+                       *
+               *
+                     *
+
+         .                      .
+         .                      ;
+         :                  - --+- -
+         !           .          !
+         |        .             .
+         |_         +
+      ,  | `.
+--- --+-<#>-+- ---  --  -
+      `._|_,'
+         T
+         |
+         !
+         :         . : 
+         .       *
+
+  </pre>
+     <img src="https://cs5.pikabu.ru/images/big_size_comm_an/2014-05_2/13994557743374.gif" class="corner-gif">
     <hi1>lftq // laftiq // laft</hi1>
     <txt1>
       hiii yo 
@@ -91,28 +149,61 @@ a {
     </txt1>
     <txt1>
       i am borya aka <strong>laft</strong> aka laptos &#9752; <br>
-      not developer and not designer <br>
-      just 10th grade student from russia. 
+  not developer and not designer, i'm just 
+  <span id="dynamic-word" style="cursor: pointer; color: #cf7272; text-decoration: underline dotted;.">
+    chill
+    
+  </span> <br>
+      so idk why i made this site
     </txt1>
 
     <txt1>
-      <span class="highlight">rlly interesting shit bout me:</span> bday:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 06//11//20XX <br> cntry:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; russia &#127479;&#127482; <br> fav music :&nbsp;&nbsp; underground rap, breakcore. <br>
+      <span class="highlight">rlly (or not) interesting things bout me:</span> bday:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 06//11//20XX <br> cntry:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; russia &#127479;&#127482; <br> fav music :&nbsp;&nbsp; underground rap, breakcore, any EDM <br>
       fav tv shows: rik and morty, breaking bad <br>
       fav food: &nbsp;&nbsp;&nbsp;&nbsp;who cares lol <br>
-      hobbies:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;drums, guitar, design(no), a lot of cool stuff <br>
-      philosophy:&nbsp;&nbsp;&nbsp;fuck philosophy. tech sciences on top
+      hobbies:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;drums, guitar, any other cool stuff <br>
+      fav games:&nbsp;&nbsp;&nbsp;&nbsp;dota (lol), gta5rp, hollow knight
     </txt1>
+
     <txt1>
     <span class="highlight">where u can find me:</span>
       telegram:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://t.me/laftik" target="_blank">@laftik</a> <br>
       discrord:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://discord.com/users/698974920314454026" target="_blank">@laftq</a> <br>
-      gmail(why):&nbsp;&nbsp;&nbsp;borispopovsamp@gmail.com
+      insta:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@ilafet.1 <br>
+      vk:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@belk4aa <br>
+      steam:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@laptos
+    </txt1>
 
-    </txt1>
     <txt1>
-      <br> <br> <br> <br> <br> it will be something below later i think yo
+    <span class="highlight">my PC spec:</span>
+    gpu:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4070ti gigabyte eagle<br> 
+    cpu: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5600x<br>
+    ram:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 16gb <br>
+    memory:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4tb HDD, 126gb SSD<br>
+    monitor: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AOC 24" 144hz<br>
+    keyboard:&nbsp;&nbsp;&nbsp;&nbsp; DP k78a<br>
+    mice:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mchose ax5pro <br>
+    audio:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; minifuse1 + steelseries arctis 9
+    <br> 
     </txt1>
+
+    <txt1>
+      <br> <br> <br> <br>i've stolen everything from <a href="https://tei.su/" target="_blank">teidesu</a>, so thanks Alina =D <br> it will be something below later i think yo
+    </txt1>
+    
   </div>
+
+</div>
+<script>
+  const words = ["goofy student", "guitarist", "drummer", "...idk who am I"];
+  const span = document.getElementById("dynamic-word");
+
+  span.addEventListener("click", () => {
+    // выбираем случайное слово из массива
+    const newWord = words[Math.floor(Math.random() * words.length)];
+    span.textContent = newWord;
+  });
+</script>
 </body>
  
 </html>
