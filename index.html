@@ -1,209 +1,2083 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <title>laftq.шетемеле</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    /* Фон страницы */
-    body {
-      margin: 0;
-      padding: 0;
-      background: url("https://media1.giphy.com/media/v1.Y2lkPTZjMDliOTUydXJzc3ZkdDU3YnM2Y2treXAwanllM2tuNXBleG91YzQwNm44Zjd0NSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/k8kITi9SAwe9JWbUaH/200w.gif") no-repeat center center fixed;
-      background-size: cover;
-      font-family: monospace;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start; /* плашка сверху */
-      min-height: 100vh;
-    }
+<!doctype html>
+<!-- ====================================================================
+     VT323 VARIANT of index.html — a fake Linux terminal home screen.
+     The console runs small utility commands inline (help, whoami, ls,
+     clear); the content modules (about / contacts / specs / credits)
+     open their own dedicated page instead of printing inline.
+     Only the webfont <link> + the CSS font variable differ from a "normal"
+     font; the ASCII brand logo keeps its own system monospace.
+     ==================================================================== -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="borya aka laft aka laptos — terminal bio"
+    />
+    <!-- browser tab title — EDIT freely -->
+    <title>laft // launch mode</title>
 
-  span.highlight {
-  display: block;       /* превращаем в блочный элемент, чтобы margin работал */
-  font-weight: bold;    /* жирный текст */
-  margin-top: 3px;     /* небольшой отступ сверху */
-  margin-bottom: 3px;  /* небольшой отступ снизу */
-}
+    <!-- WEBFONT: VT323 (pixel/terminal font, single weight 400) from Google Fonts.
+     To use a different font, change this <link> AND the font variable in :root. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+      rel="stylesheet"
+    />
 
+    <style>
+      /* ====================================================================
+     LAPTOS — terminal home + content pages.
+       - HOME view = a bare Linux-style terminal (no border).
+       - utility commands (help/whoami/ls/clear) print inline.
+       - module commands (about/contacts/specs/credits) open a PAGE view.
+       - small dim buttons above the terminal are shortcuts to those pages.
+       - whole UI fits one screen, no page scroll; long content scrolls
+         inside its own area.
+       - phones: the terminal input is hidden, the buttons become the
+         primary control (module taps open pages; help/whoami still print).
+     ==================================================================== */
 
+      /* ============================  THEME  ============================
+     Main control panel — change a value and it updates everywhere.
+       colors -> --bg/--fg/--fg-bright/--dim/--dimmer/--hair
+       FONT   -> --mono   ·   spacing -> --pad   ·   motion -> --ease
+     ================================================================ */
+      :root {
+        --bg: #000000; /* page background (pure black)             */
+        --fg: #ececec; /* near-white primary text                 */
+        --fg-bright: #ffffff; /* emphasised text                         */
+        --dim: #6f6f6f; /* secondary text                          */
+        --dimmer: #454545; /* hairlines, annotations, chrome          */
+        --hair: rgba(255, 255, 255, 0.09);
+        /* SITE FONT — VT323. Swap this line + the <link> to re-typeface.
+       (the ASCII logo keeps its own monospace, see .ascii-logo) */
+        --mono: "VT323", ui-monospace, "Courier New", monospace;
+        --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+        --pad: clamp(26px, 6vw, 96px); /* outer page margin        */
+      }
 
-a {
-  color: #922929;       /* цвет ссылки */
-  text-decoration: none; /* убрать подчеркивание */
-  font-weight: bold;     /* жирный текст */
-}
- .corner-gif {
-  position: absolute;  /* абсолютное позиционирование внутри .overlay */
-  top: 40px;           /* отступ сверху */
-  right: 40px;         /* отступ справа */
-  width: 100px;         /* ширина GIF */
-  height: auto;        /* сохраняем пропорции */
-  border-radius: 5px;  /* если хочешь скруглить уголки */
-}
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      } /* whole UI fits one screen, no page scroll */
 
- .corner-ascii {
-  position: absolute;
-  top: 10px;   /* отступ сверху */
-  right: 10px; /* отступ справа */
-  font-size: 14px; /* размер "символов" */
-  line-height: 14px; /* высота строки для правильного вида */
-  color: #cf7272;   /* цвет ASCII */
-  text-align: left;
-  white-space: pre; /* сохраняем пробелы и переносы */
-  font-family: 'Courier New' monospace;
-}
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--mono);
+        font-weight: 300;
+        font-size: clamp(16px, 1.25vw, 19px); /* VT323 reads small — sized up */
+        line-height: 1.55;
+        letter-spacing: 0.01em;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
 
+      /* ---------- atmospheric overlays (CRT scanlines + vignette) ----------
+     To remove the CRT vibe: delete the two <div>s in the markup. */
+      .scanlines,
+      .vignette {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+      }
+      .scanlines {
+        z-index: 60;
+        background: repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.022) 0px,
+          rgba(255, 255, 255, 0.022) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+        mix-blend-mode: screen;
+        opacity: 0.5;
+      }
+      .vignette {
+        z-index: 55;
+        background: radial-gradient(
+          ellipse at 50% 46%,
+          transparent 52%,
+          rgba(0, 0, 0, 0.72) 100%
+        );
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .scanlines {
+          animation: scan 9s linear infinite;
+        }
+      }
+      @keyframes scan {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: 0 6px;
+        }
+      }
 
-    /* Плашка */
-    .overlay {
-      padding: 20px 0px; /* внутренние отступы */
-      background-color: #201a1a;
-      position: relative;
-      margin-top: 0px; /* отступ сверху от body */
-      width: 700px; /* ширина плашки */
-      max-width: 800px; /* ограничение по ширине */
-      background-color: #201716;
-      font-family: 'Courier New' monospace; /* поменять шрифт */
-      color: #cf7272; /* цвет текста */
-      border-left: 2px solid #cf7272;   /* левая граница */
-      border-right: 2px solid #cf7272;  /* правая граница */
-      box-sizing: border-box;
-       font-size: 15px;
-       height: 1000px; /* пример высоты */
-      
-    }
+      .glow {
+        text-shadow: 0 0 18px rgba(255, 255, 255, 0.1);
+      }
 
-    /* Заголовок <hi1> сверху с отступом */
-    .overlay hi1 {
-     
-      position: absolute;
-      top: 20px;
-      left: 35%; /* по центру горизонтали */
-      margin: 0;
-      text-align: center;
-      position: absolute;
-      left: 50%;
-       transform: translate(-50%, -50%); /* точный центр */
-       margin: 0;
-       text-align: center
-      
-    }
+      /* ---------- layout shell (fixed-height, clips overflow) ---------- */
+      .shell {
+        position: relative;
+        z-index: 10;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        padding: var(--pad);
+        display: flex;
+        flex-direction: column;
+      }
 
-    txt1 {
-  display: block;   /* делает элемент блочным */
-  margin: 0px 0px;   /* отступы сверху и снизу */
-  text-align: left; /* выравнивание текста */
-}
+      /* top status chrome — EDIT the OS name / version / right label.
+     The clock (#clock) is filled live by JS; leave its text alone. */
+      .statusbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 24px;
+        font-size: 13px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--dim);
+        flex-wrap: wrap;
+        user-select: none;
+        flex: none;
+      }
+      .statusbar .sys {
+        color: var(--fg);
+      }
+      .statusbar .node {
+        display: inline-block;
+        width: 0.5em;
+        height: 0.5em;
+        border-radius: 50%;
+        background: var(--fg);
+        margin-right: 0.7em;
+        transform: translateY(-0.05em);
+        animation: nodepulse 2.4s var(--ease) infinite;
+      }
+      @keyframes nodepulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.28;
+        }
+      }
+      .statusbar .right {
+        text-align: right;
+      }
+      .statusbar .clock {
+        font-variant-numeric: tabular-nums;
+        color: var(--fg);
+      }
 
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      } /* console caret */
 
+      /* the stage holds all views; only the active one is shown */
+      .stage {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        align-items: stretch;
+      }
 
-    /* Основной текст слева */
-    .overlay txt1 {
-      margin-top: 20px; /* чтобы текст не накладывался на заголовок */
-      text-align: left;
-      display: block;
-      padding-left: 15px;
-    }
-  </style>
-</head>
-<body>
-  <div class="overlay">
-     <pre class="corner-ascii">
-                    '
-            *          .
-                   *       '
-              *                *
+      /* ---------- VIEW SWITCHING (home terminal + content pages) ---------- */
+      .view {
+        display: none;
+      }
+      .view.active {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        max-width: 880px;
+        margin-top: clamp(16px, 4vh, 44px);
+      }
+      .view.enter {
+        animation: viewIn 0.34s var(--ease) both;
+      }
+      @keyframes viewIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
 
+      /* ---------- BRAND LOGO (ASCII wordmark, home only) ----------
+     Uses a REAL system monospace (not --mono / VT323) so box-drawing
+     glyphs (█ ╗ ═) align. Resize via --logo-size. */
+      .heading-block {
+        margin: 0 0 8px;
+        flex: none;
+      }
+      .ascii-logo {
+        --logo-size: clamp(6px, 2.2vw, 18px); /* <- GROW / SHRINK the logo */
+        margin: 0;
+        font-family:
+          ui-monospace, "SF Mono", Menlo, Consolas, "DejaVu Sans Mono",
+          "Courier New", monospace;
+        font-size: var(--logo-size);
+        line-height: 1.04;
+        letter-spacing: 0;
+        color: var(--fg-bright);
+        white-space: pre;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .ascii-logo::-webkit-scrollbar {
+        display: none;
+      }
+      .vh {
+        position: absolute !important;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      .crumb {
+        display: block;
+        margin-top: 18px;
+        font-size: clamp(15px, 1.9vw, 19px);
+        letter-spacing: 0.16em;
+        color: var(--dim);
+      }
 
+      .rule {
+        height: 1px;
+        background: var(--hair);
+        border: 0;
+        margin: clamp(22px, 4vh, 38px) 0;
+        width: 100%;
+        flex: none;
+      }
 
+      /* ---------- module buttons (shortcuts to the pages) ----------
+     Each runs the matching command. data-cmd must be a real command. */
+      .quicklinks {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0 1.5ch;
+        margin: 0 0 clamp(20px, 3.5vh, 30px);
+        flex: none;
+        font-size: 14px;
+        letter-spacing: 0.08em;
+        text-transform: lowercase;
+        user-select: none;
+      }
+      .quicklinks .ql {
+        background: none;
+        border: 0;
+        padding: 0;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: inherit;
+        letter-spacing: inherit;
+        color: var(--dim);
+        transition:
+          color 0.2s var(--ease),
+          text-shadow 0.2s var(--ease);
+        -webkit-tap-highlight-color: transparent;
+      }
+      .quicklinks .ql:hover,
+      .quicklinks .ql:focus-visible {
+        color: var(--fg-bright);
+        outline: none;
+        text-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
+      }
+      .quicklinks .ql::before {
+        content: "·";
+        margin-right: 1.5ch;
+        color: var(--dimmer);
+      }
+      .quicklinks .ql:first-child::before {
+        content: "";
+        margin: 0;
+      }
 
+      /* ====================  TERMINAL (no border)  ==================== */
+      .terminal {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .term-out {
+        margin: 0 0 6px;
+        flex: 0 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: clamp(15px, 1.5vw, 18px);
+        line-height: 1.6;
+        color: var(--fg);
+      }
+      .term-out:empty {
+        display: none;
+      }
+      .term-out::-webkit-scrollbar {
+        width: 6px;
+      }
+      .term-out::-webkit-scrollbar-thumb {
+        background: var(--dimmer);
+        border-radius: 3px;
+      }
+      .term-block {
+        margin: 0 0 1em;
+      }
+      .term-block:last-child {
+        margin-bottom: 0.3em;
+      }
+      .term-echo {
+        color: var(--fg-bright);
+      }
+      .term-out .prompt {
+        color: var(--dim);
+      }
+      .term-key {
+        color: var(--dim);
+      }
+      .term-err {
+        color: var(--fg);
+      }
 
-   *   '*
-           *
-                *
-                       *
-               *
-                     *
+      .term-line {
+        flex: none;
+        display: flex;
+        align-items: center;
+        gap: 0.7ch;
+        font-size: clamp(16px, 1.8vw, 22px);
+      }
+      .term-line .prompt {
+        color: var(--fg-bright);
+        white-space: nowrap;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+      }
+      .cmd-field {
+        position: relative;
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+      }
+      #cmd {
+        flex: 1;
+        min-width: 0; /* fills the line — text never wraps under $ */
+        background: none;
+        border: 0;
+        outline: none;
+        font-family: inherit;
+        font-size: inherit;
+        letter-spacing: inherit;
+        color: var(--fg-bright);
+        caret-color: var(--fg-bright);
+        padding: 0;
+      }
+      /* fake caret (shown only when the field is empty + unfocused).
+     Absolutely placed at the field's start so it hugs the prompt; width
+     matched to the native text caret so it doesn't look thicker. */
+      .cmd-field .fakecaret {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        width: 1px;
+        height: 1.1em;
+        background: var(--fg-bright);
+        animation: blink 1.05s steps(1) infinite;
+      }
+      .cmd-field.typing .fakecaret {
+        display: none;
+      }
 
-         .                      .
-         .                      ;
-         :                  - --+- -
-         !           .          !
-         |        .             .
-         |_         +
-      ,  | `.
---- --+-<#>-+- ---  --  -
-      `._|_,'
-         T
-         |
-         !
-         :         . : 
-         .       *
+      /* ====================  CONTENT PAGES  ==================== */
+      .page-head {
+        display: flex;
+        align-items: baseline;
+        gap: 16px;
+        margin: 0 0 4px;
+        flex: none;
+      }
+      .back-btn {
+        background: none;
+        border: 0;
+        cursor: pointer;
+        padding: 0;
+        font-family: inherit;
+        font-size: 14px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--dim);
+        transition:
+          color 0.2s var(--ease),
+          transform 0.2s var(--ease);
+        -webkit-tap-highlight-color: transparent;
+      }
+      .back-btn:hover,
+      .back-btn:focus-visible {
+        color: var(--fg);
+        outline: none;
+        transform: translateX(-0.3ch);
+      }
+      .back-btn .ar {
+        color: var(--fg);
+        margin-right: 0.5em;
+      }
+      .page-eyebrow {
+        flex: none;
+        margin: 8px 0 0;
+        font-size: 12px;
+        letter-spacing: 0.4em;
+        text-transform: uppercase;
+        color: var(--dim);
+      }
+      .page-title {
+        flex: none;
+        margin: 4px 0;
+        font-weight: 200;
+        font-size: clamp(30px, 5.6vw, 58px);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--fg-bright);
+        line-height: 1.04;
+      }
+      .page-sub {
+        flex: none;
+        margin: 0 0 20px;
+        font-size: clamp(14px, 1.7vw, 17px);
+        letter-spacing: 0.08em;
+        color: var(--dim);
+      }
+      .page-body {
+        flex: 0 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+      } /* long content scrolls here, not the page */
+      .page-body::-webkit-scrollbar {
+        width: 6px;
+      }
+      .page-body::-webkit-scrollbar-thumb {
+        background: var(--dimmer);
+        border-radius: 3px;
+      }
 
-  </pre>
-     <img src="https://cs5.pikabu.ru/images/big_size_comm_an/2014-05_2/13994557743374.gif" class="corner-gif">
-    <hi1>lftq // laftiq // laft</hi1>
-    <txt1>
-      hiii yo 
-      
-    </txt1>
-    <txt1>
-      i am borya aka <strong>laft</strong> aka laptos &#9752; <br>
-  not developer and not designer, i'm just 
-  <span id="dynamic-word" style="cursor: pointer; color: #cf7272; text-decoration: underline dotted;.">
-    chill
-    
-  </span> <br>
-      so idk why i made this site
-    </txt1>
+      .lede {
+        max-width: 660px;
+        font-size: clamp(17px, 2.1vw, 21px);
+        line-height: 1.8;
+        color: var(--fg);
+        margin: 0 0 26px;
+      }
+      .lede strong {
+        color: var(--fg-bright);
+        font-weight: 400;
+      }
 
-    <txt1>
-      <span class="highlight">rlly (or not) interesting things bout me:</span> bday:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 06//11//20XX <br> cntry:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; russia &#127479;&#127482; <br> fav music :&nbsp;&nbsp; underground rap, breakcore, any EDM <br>
-      fav tv shows: rik and morty, breaking bad <br>
-      fav food: &nbsp;&nbsp;&nbsp;&nbsp;who cares lol <br>
-      hobbies:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;drums, guitar, any other cool stuff <br>
-      fav games:&nbsp;&nbsp;&nbsp;&nbsp;dota (lol), gta5rp, hollow knight
-    </txt1>
+      dl.data {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 0 clamp(20px, 4vw, 54px);
+        margin: 0;
+        max-width: 720px;
+      }
+      dl.data dt {
+        color: var(--dim);
+        padding: 10px 0;
+        font-size: 15px;
+        letter-spacing: 0.1em;
+        text-transform: lowercase;
+        border-bottom: 1px solid var(--hair);
+        white-space: nowrap;
+      }
+      dl.data dd {
+        margin: 0;
+        padding: 10px 0;
+        color: var(--fg);
+        font-size: 16px;
+        letter-spacing: 0.02em;
+        border-bottom: 1px solid var(--hair);
+      }
+      dl.data .muted {
+        color: var(--dim);
+      }
+      .credits-body {
+        max-width: 600px;
+        font-size: clamp(17px, 2.1vw, 21px);
+        line-height: 1.85;
+        color: var(--fg);
+      }
+      .credits-meta {
+        margin-top: 26px;
+        font-size: 12px;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--dimmer);
+      }
+      /* tiny, easy-to-miss note that the credit text itself was written by claude */
+      .credits-note {
+        margin-top: 16px;
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        color: var(--dimmer);
+        opacity: 0.55;
+      }
+      a.lnk {
+        color: var(--fg-bright);
+        text-decoration: none;
+        border-bottom: 1px solid var(--dim);
+        transition: border-color 0.2s var(--ease);
+      }
+      a.lnk:hover,
+      a.lnk:focus-visible {
+        border-bottom-color: var(--fg);
+        outline: none;
+      }
 
-    <txt1>
-    <span class="highlight">where u can find me:</span>
-      telegram:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://t.me/laftik" target="_blank">@laftik</a> <br>
-      discrord:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://discord.com/users/698974920314454026" target="_blank">@laftq</a> <br>
-      insta:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@ilafet.1 <br>
-      vk:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@belk4aa <br>
-      steam:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@laptos
-    </txt1>
+      /* the "chill" easter-egg word (in the about page) */
+      .egg-word {
+        color: var(--fg-bright);
+        cursor: pointer;
+        border-bottom: 1px dotted var(--dim);
+        -webkit-tap-highlight-color: transparent;
+      }
+      .egg-word:hover {
+        border-bottom-color: var(--fg);
+      }
 
-    <txt1>
-    <span class="highlight">my PC spec:</span>
-    gpu:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4070ti gigabyte eagle<br> 
-    cpu: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5600x<br>
-    ram:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 16gb <br>
-    memory:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4tb HDD, 126gb SSD<br>
-    monitor: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AOC 24" 144hz<br>
-    keyboard:&nbsp;&nbsp;&nbsp;&nbsp; DP k78a<br>
-    mice:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mchose ax5pro <br>
-    audio:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; minifuse1 + steelseries arctis 9
-    <br> 
-    </txt1>
+      .footer-line {
+        flex: none;
+        padding-top: clamp(20px, 4vh, 40px);
+        font-size: 12px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--dimmer);
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        user-select: none;
+      }
 
-    <txt1>
-      <br> <br> <br> <br>i've stolen everything from <a href="https://tei.su/" target="_blank">teidesu</a>, so thanks Alina =D <br> it will be something below later i think yo
-    </txt1>
-    
-  </div>
+      /* ---------- boot overlay ---------- */
+      #boot {
+        position: fixed;
+        inset: 0;
+        z-index: 80;
+        background: #000;
+        padding: var(--pad);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        cursor: pointer;
+        font-size: clamp(13px, 1.5vw, 16px);
+        letter-spacing: 0.06em;
+        color: var(--dim);
+      }
+      #boot.gone {
+        animation: bootout 0.5s var(--ease) forwards;
+      }
+      @keyframes bootout {
+        to {
+          opacity: 0;
+          visibility: hidden;
+        }
+      }
+      #boot-log {
+        white-space: pre-wrap;
+        margin: 0;
+        font-family: inherit;
+      }
+      #boot-log .ok {
+        color: var(--fg);
+      }
+      #boot-log .hot {
+        color: var(--fg-bright);
+        text-shadow: 0 0 14px rgba(255, 255, 255, 0.35);
+      }
+      #boot-skip {
+        position: absolute;
+        top: var(--pad);
+        right: var(--pad);
+        font-size: 11px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--dimmer);
+      }
 
-</div>
-<script>
-  const words = ["goofy student", "guitarist", "drummer", "...idk who am I"];
-  const span = document.getElementById("dynamic-word");
+      /* ---------- PHONES (<= 600px) ----------
+     The typing terminal input is removed; the BUTTONS become the key
+     control (module taps open pages; help/whoami still print inline). */
+      @media (max-width: 600px) {
+        body {
+          font-size: 17px;
+          letter-spacing: 0;
+        }
+        .statusbar {
+          font-size: 12px;
+          letter-spacing: 0.16em;
+        }
+        .footer-line {
+          font-size: 11px;
+          letter-spacing: 0.16em;
+        }
 
-  span.addEventListener("click", () => {
-    // выбираем случайное слово из массива
-    const newWord = words[Math.floor(Math.random() * words.length)];
-    span.textContent = newWord;
-  });
-</script>
-</body>
- 
+        .terminal {
+          display: none;
+        } /* no terminal at all on phones */
+        .quicklinks .ql[data-cmd="help"] {
+          display: none;
+        } /* help needs the terminal -> hide it too */
+
+        .quicklinks {
+          /* the buttons ARE the interface */
+          flex-direction: column;
+          gap: 0;
+          margin: clamp(10px, 3vh, 22px) 0 clamp(14px, 3vh, 24px);
+          font-size: clamp(24px, 7.5vw, 34px);
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+        }
+        .quicklinks .ql {
+          color: var(--fg);
+          padding: 12px 0;
+          width: 100%;
+        }
+        .quicklinks .ql:active {
+          color: var(--fg-bright);
+        }
+        .quicklinks .ql::before {
+          content: "";
+          margin: 0;
+        }
+
+        dl.data {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+        dl.data dt {
+          border-bottom: 0;
+          padding-bottom: 0;
+          padding-top: 14px;
+        }
+        dl.data dd {
+          padding-top: 2px;
+        }
+      }
+
+      /* ---------- SHORT SCREENS — squeeze so it still fits ---------- */
+      @media (max-height: 640px) {
+        :root {
+          --pad: clamp(16px, 4vw, 40px);
+        }
+        .view.active {
+          margin-top: clamp(8px, 2vh, 18px);
+        }
+        .rule {
+          margin: clamp(12px, 2.5vh, 22px) 0;
+        }
+        .crumb {
+          margin-top: 12px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.001ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ====================================================================
+       HOW TO EDIT & EXTEND THIS PAGE
+       ────────────────────────────────────────────────────────────────────
+       QUICK MAP — where things live:
+         • Colours / font / spacing ..... <style> :root  (top of CSS)
+         • Brand ASCII logo ............. search "BRAND LOGO"  (in <body>)
+         • Tab title .................... <title>  (in <head>)
+         • Status bar / footer text ..... search "statusbar" / "footer-line"
+         • Boot animation text .......... JS  "lines" array
+         • Page content ................. <section id="view-NAME"> blocks below
+         • Console commands ............. JS  search "COMMAND REGISTRY"
+         • "chill" easter-egg words ..... JS  EGG array
+
+       ── ADD A NEW PAGE (e.g. "music") ─────────────────────────────────
+         1. Copy the PAGE TEMPLATE comment (just below the CREDITS page),
+            uncomment it, set id="view-music" and fill in your content.
+         2. JS: add the name to PAGE_CMDS ......  music:1
+         3. (optional) add a shortcut button inside <nav class="quicklinks">:
+              <button class="ql" type="button" data-cmd="music">music</button>
+         4. (optional) add "music" to COMMAND_NAMES (so ls/Tab know it) and
+            a line in cmdHelp(). Now typing `music` opens that page.
+
+       ── ADD A CONSOLE COMMAND that prints inline (like whoami) ────────
+         1. JS: write a function ....  function cmdFoo(){ append('hi there'); }
+         2. JS: register it in INLINE ....  foo: cmdFoo
+         3. (optional) add 'foo' to COMMAND_NAMES + a line in cmdHelp().
+            (append() takes HTML; use "\n" for line breaks.)
+
+       ── ADD A COMMAND THAT REDIRECTS ──────────────────────────────────
+         • to one of YOUR pages: add an alias in ALIASES, e.g.  rig:'specs'
+           (typing `rig` opens the specs page)
+         • to an EXTERNAL url: add it to REDIRECTS, e.g.
+           github:'https://github.com/you'   (opens in a new browser tab)
+
+       Words are matched lowercase. Resolution order when you type a command:
+       ALIASES -> PAGE_CMDS -> REDIRECTS -> home -> INLINE -> "not found".
+       ==================================================================== -->
+
+    <!-- CRT atmosphere: delete these two lines to switch off scanlines/vignette -->
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+
+    <!-- ===== BOOT OVERLAY ===== -->
+    <div
+      id="boot"
+      role="status"
+      aria-label="System boot sequence, click or press any key to skip"
+    >
+      <span id="boot-skip">[ press any key / tap to skip ]</span>
+      <pre id="boot-log"></pre>
+    </div>
+
+    <!-- ===== MAIN SHELL ===== -->
+    <main class="shell" id="shell" hidden>
+      <header class="statusbar">
+        <div>
+          <span class="node" aria-hidden="true"></span
+          ><span class="sys">LFTQ.OS</span> &nbsp;// &nbsp;v1.2&nbsp; // &nbsp; <br>
+            ㅤ
+        </div>
+        <div class="right">
+          <span class="clock" id="clock" aria-label="system clock"
+            >00:00:00</span
+          >
+          &middot; sys ready
+        </div>
+      </header>
+
+      <div class="stage">
+        <!-- ============ HOME VIEW = terminal ============ -->
+        <section class="view active" id="view-home" aria-label="terminal">
+          <!-- BRAND LOGO — paste new block art between the <pre> tags (flush-left),
+             keep the <h1> + aria-label in sync. -->
+          <div class="heading-block">
+            <h1 class="vh">laptos</h1>
+            <pre class="ascii-logo glow" role="img" aria-label="laptos">
+██╗      █████╗ ██████╗ ████████╗ ██████╗ ███████╗
+██║     ██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗██╔════╝
+██║     ███████║██████╔╝   ██║   ██║   ██║███████╗
+██║     ██╔══██║██╔═══╝    ██║   ██║   ██║╚════██║
+███████╗██║  ██║██║        ██║   ╚██████╔╝███████║
+╚══════╝╚═╝  ╚═╝╚═╝        ╚═╝    ╚═════╝ ╚══════╝</pre
+            >
+            <span class="crumb"
+              ></span
+            >
+          </div>
+
+          <hr class="rule" />
+
+          <!-- MODULE BUTTONS — shortcuts that just run a command (data-cmd).
+             Add one:  <button class="ql" type="button" data-cmd="WORD">label</button>
+             data-cmd can be any command (a page, an inline cmd, a redirect…). -->
+          <nav class="quicklinks" aria-label="modules">
+            <button class="ql" type="button" data-cmd="about">about</button>
+            <button class="ql" type="button" data-cmd="contacts">
+              contacts
+            </button>
+            <button class="ql" type="button" data-cmd="specs">specs</button>
+            <button class="ql" type="button" data-cmd="credits">credits</button>
+            <button class="ql" type="button" data-cmd="help">help</button>
+          </nav>
+
+          <!-- TERMINAL (no border) -->
+          <div class="terminal" id="terminal">
+            <div class="term-out" id="term-out" aria-live="polite"></div>
+            <form
+              class="term-line"
+              id="cmdline"
+              autocomplete="off"
+              aria-label="Terminal command line"
+            >
+              <span class="prompt">laft@laptos:~$</span>
+              <span class="cmd-field" id="cmd-field">
+                <input
+                  id="cmd"
+                  name="cmd"
+                  type="text"
+                  spellcheck="false"
+                  autocapitalize="off"
+                  autocorrect="off"
+                  aria-label="Terminal command input"
+                />
+                <span class="fakecaret" aria-hidden="true"></span>
+              </span>
+            </form>
+          </div>
+        </section>
+
+        <!-- ============ CONTENT PAGES ============
+           Each page is a <section class="view" id="view-NAME">. Only one view
+           is shown at a time; the home/terminal view is also one of these.
+           To add a page, copy the PAGE TEMPLATE comment after the CREDITS page. -->
+
+        <!-- ============ ABOUT PAGE ============ -->
+        <section
+          class="view"
+          id="view-about"
+          aria-label="About"
+          aria-hidden="true"
+        >
+          <div class="page-head">
+            <button class="back-btn" type="button" data-home>
+              <span class="ar">&lsaquo;</span>back to terminal<br>
+               ㅤ
+            </button>
+          </div>
+          <p class="page-eyebrow">// module 01</p>
+          <h2 class="page-title glow">about</h2>
+          <p class="page-sub">hiii yo</p>
+          <div class="page-body">
+            <p class="lede">
+              i am borya aka <strong>laft</strong> aka laptos &#9752; &mdash;
+              not developer and not designer, i'm just
+              <span
+                class="egg-word"
+                role="button"
+                tabindex="0"
+                title="click to reroll"
+                >chill</span
+              >
+              &mdash; so idk why i made this site
+            </p>
+            <p class="page-sub">// rlly (or not) interesting things bout me</p>
+            <dl class="data">
+              <dt>bday</dt>
+              <dd>06 // 11 // 2026</dd>
+              <dt>cntry</dt>
+              <dd>russia &#127479;&#127482;</dd>
+              <dt>fav music</dt>
+              <dd>underground rap, breakcore, any EDM</dd>
+              <dt>fav tv shows</dt>
+              <dd>rik and morty, breaking bad</dd>
+              <dt>hobbies</dt>
+              <dd>drums, guitar, any other cool stuff</dd>
+              <dt>fav games</dt>
+              <dd>dota (lol), gta5rp, hollow knight</dd>
+            </dl>
+          </div>
+        </section>
+
+        <!-- ============ CONTACTS PAGE ============ -->
+        <section
+          class="view"
+          id="view-contacts"
+          aria-label="Contacts"
+          aria-hidden="true"
+        >
+          <div class="page-head">
+            <button class="back-btn" type="button" data-home>
+              <span class="ar">&lsaquo;</span>back to terminal<br>
+               ㅤ
+            </button>
+          </div>
+          <p class="page-eyebrow">// module 02</p>
+          <h2 class="page-title glow">contacts</h2>
+          <p class="page-sub">where u can find me</p>
+          <div class="page-body">
+            <dl class="data">
+              <dt>telegram</dt>
+              <dd>
+                <a
+                  class="lnk"
+                  href="https://t.me/laftik"
+                  target="_blank"
+                  rel="noopener"
+                  >@laftik</a
+                >
+              </dd>
+              <dt>discord</dt>
+              <dd>
+                <a
+                  class="lnk"
+                  href="https://discord.com/users/698974920314454026"
+                  target="_blank"
+                  rel="noopener"
+                  >@laftq</a
+                >
+              </dd>
+              <dt>insta</dt>
+              <dd>@ilafet.1 <span class="muted">// no link</span></dd>
+              <dt>vk</dt>
+              <dd>@belk4aa <span class="muted">// no link</span></dd>
+              <dt>steam</dt>
+              <dd>@laptos <span class="muted">// no link</span></dd>
+            </dl>
+          </div>
+        </section>
+
+        <!-- ============ SPECS PAGE ============ -->
+        <section
+          class="view"
+          id="view-specs"
+          aria-label="Specs"
+          aria-hidden="true"
+        >
+          <div class="page-head">
+            <button class="back-btn" type="button" data-home>
+              <span class="ar">&lsaquo;</span>back to terminal<br>
+               ㅤ
+            </button>
+          </div>
+          <p class="page-eyebrow">// module 03</p>
+          <h2 class="page-title glow">specs</h2>
+          <p class="page-sub">my PC spec</p>
+          <div class="page-body">
+            <dl class="data">
+              <dt>gpu</dt>
+              <dd>4070ti gigabyte eagle</dd>
+              <dt>cpu</dt>
+              <dd>5600x</dd>
+              <dt>ram</dt>
+              <dd>16gb</dd>
+              <dt>memory</dt>
+              <dd>4tb HDD, 126gb SSD</dd>
+              <dt>monitor</dt>
+              <dd>AOC 24" 144hz</dd>
+              <dt>keyboard</dt>
+              <dd>DP k78a</dd>
+              <dt>mice</dt>
+              <dd>mchose ax5pro</dd>
+              <dt>audio</dt>
+              <dd>minifuse1 + steelseries arctis 9</dd>
+            </dl>
+          </div>
+        </section>
+
+        <!-- ============ CREDITS PAGE ============ -->
+        <section
+          class="view"
+          id="view-credits"
+          aria-label="Credits"
+          aria-hidden="true"
+        >
+          <div class="page-head">
+            <button class="back-btn" type="button" data-home>
+              <span class="ar">&lsaquo;</span>back to terminal <br>
+               ㅤ
+            </button>
+          </div>
+          <p class="page-eyebrow">// module 04</p>
+          <h2 class="page-title glow">credits</h2>
+          <div class="page-body">
+            <p class="credits-body">
+              this whole terminal was hacked together with
+              <a
+                class="lnk"
+                href="https://claude.com/claude-code"
+                target="_blank"
+                rel="noopener"
+                >claude</a
+              >
+              &mdash; anthropic's ai &mdash; pair-programming it with me line by
+              line.
+            </p>
+            <p class="credits-body">
+              it wrote the boot sequence, the command parser and this very page,
+              and survived a LOT of "сделай по-другому". no humans were harmed,
+              only refactored. =)
+            </p>
+            <p class="credits-meta">// built by laft &times; claude</p>
+            <p class="credits-note">
+              // (psst &mdash; this credits text was written by claude itself)
+            </p>
+          </div>
+        </section>
+
+        <!-- ============ PAGE TEMPLATE (copy me to add a page) ============
+           Steps: (1) copy the <section> below OUT of this comment;
+                  (2) rename id="view-NAME" (NAME = lowercase, no spaces);
+                  (3) JS: add  NAME:1  to PAGE_CMDS;
+                  (4) optional: a quicklinks button + COMMAND_NAMES/help entry.
+           Use <dl class="data"> rows for label/value lists, or <p class="lede">
+           for prose. Links: <a class="lnk" href="..." target="_blank" rel="noopener">.
+
+      <section class="view" id="view-NAME" aria-label="NAME" aria-hidden="true">
+        <div class="page-head"><button class="back-btn" type="button" data-home><span class="ar">&lsaquo;</span>back to terminal</button></div>
+        <p class="page-eyebrow">// module 0X</p>
+        <h2 class="page-title glow">NAME</h2>
+        <p class="page-sub">a short subtitle</p>
+        <div class="page-body">
+          <p class="lede">your intro text goes here</p>
+          <dl class="data">
+            <dt>label</dt> <dd>value</dd>
+            <dt>label</dt> <dd>value</dd>
+          </dl>
+        </div>
+      </section>
+
+      ============================================================= -->
+      </div>
+
+      <!-- bottom footer — EDIT both labels freely -->
+      <footer class="footer-line">
+        <span>lftq // laftiq // laft</span>
+        <span>&copy; 2026 &middot; launch mode</span>
+      </footer>
+    </main>
+
+    <!-- no-JS fallback: terminal needs JS, so show a plain static bio -->
+    <noscript>
+      <style>
+        #boot {
+          display: none !important;
+        }
+        #shell[hidden] {
+          display: flex !important;
+        }
+        .terminal,
+        .quicklinks {
+          display: none !important;
+        }
+        .view {
+          display: flex !important;
+        } /* show all sections stacked */
+        .back-btn,
+        .page-eyebrow {
+          display: none !important;
+        }
+      </style>
+    </noscript>
+
+    <script>
+      (function () {
+        "use strict";
+        var reduce =
+          window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        function escapeHtml(s) {
+          return String(s)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        }
+
+        /* ======================= BOOT SEQUENCE ======================= */
+        var bootEl = document.getElementById("boot");
+        var bootLog = document.getElementById("boot-log");
+        var shell = document.getElementById("shell");
+        var bootDone = false,
+          bootTimer = null,
+          safetyTimer = null;
+
+        /* BOOT LOG TEXT — edit freely. "@" prefix = fully highlighted line;
+     ok / loaded / breakcore auto-highlight. */
+        var lines = [
+          "LFTQ.OS  //  cold boot",
+          "> mounting /dev/borya .......... ok",
+          "> identity: laft / laftiq / laptos",
+          "> hardware: 4070ti / 5600x / 16gb",
+          "> audio link: minifuse1 ........ ok",
+          "> calibrating ambient mood .... breakcore activated",
+          "> personality module [nerd] ... loaded",
+          "@entering LAUNCH MODE",
+        ];
+        function highlightBoot(s) {
+          if (s.charAt(0) === "@") {
+            return '<span class="hot">' + escapeHtml(s.slice(1)) + "</span>";
+          }
+          return escapeHtml(s).replace(
+            /\b(ok|loaded|breakcore)\b/g,
+            '<span class="ok">$1</span>',
+          );
+        }
+        function finishBoot() {
+          if (bootDone) return;
+          bootDone = true;
+          if (bootTimer) clearTimeout(bootTimer);
+          if (safetyTimer) clearTimeout(safetyTimer);
+          bootEl.classList.add("gone");
+          shell.hidden = false;
+          setTimeout(function () {
+            if (bootEl && bootEl.parentNode)
+              bootEl.parentNode.removeChild(bootEl);
+          }, 520);
+          initApp();
+        }
+        bootEl.addEventListener("click", finishBoot, false);
+        bootEl.addEventListener(
+          "touchstart",
+          function () {
+            finishBoot();
+          },
+          { passive: true },
+        );
+        window.addEventListener(
+          "keydown",
+          function skip() {
+            if (!bootDone) {
+              finishBoot();
+            }
+            window.removeEventListener("keydown", skip);
+          },
+          false,
+        );
+
+        if (reduce) {
+          bootLog.innerHTML = lines.map(highlightBoot).join("\n");
+          setTimeout(finishBoot, 420);
+        } else {
+          var bi = 0,
+            ci = 0,
+            acc = "";
+          (function type() {
+            if (bootDone) return;
+            if (bi >= lines.length) {
+              bootTimer = setTimeout(finishBoot, 340);
+              return;
+            }
+            var line = lines[bi];
+            if (ci < line.length) {
+              ci++;
+              bootLog.innerHTML = highlightBoot(acc + line.slice(0, ci));
+              bootTimer = setTimeout(type, 7 + Math.random() * 8);
+            } else {
+              acc += line + "\n";
+              bi++;
+              ci = 0;
+              bootTimer = setTimeout(type, 58);
+            }
+          })();
+          safetyTimer = setTimeout(finishBoot, 4500);
+        }
+
+        /* ======================= LIVE CLOCK ======================= */
+        var clockEl = document.getElementById("clock");
+        function pad(n) {
+          return (n < 10 ? "0" : "") + n;
+        }
+        function tickClock() {
+          if (!clockEl) return;
+          var d = new Date();
+          var t =
+            pad(d.getHours()) +
+            ":" +
+            pad(d.getMinutes()) +
+            ":" +
+            pad(d.getSeconds());
+          if (clockEl.firstChild && clockEl.firstChild.nodeType === 3) {
+            clockEl.firstChild.nodeValue = t;
+          } else {
+            clockEl.textContent = t;
+          }
+        }
+        tickClock();
+        setInterval(tickClock, 1000);
+
+        /* ======================= TERMINAL + VIEWS ======================= */
+        var inited = false;
+        var outEl, cmdInput, fieldEl, isCoarse;
+        var currentView = "home";
+        var PROMPT = "laft@laptos:~$";
+        var cmdHistory = [],
+          histPos = 0,
+          draft = "";
+
+        /* EASTER-EGG WORDS — the printed "chill" word (about page) rerolls on click */
+        var EGG = [
+          "nerd",
+          "chud",
+          "larper",
+          "guitarist",
+          "drummer",
+          "phyisic enjoyer",
+        ];
+
+        /* ============================ COMMAND REGISTRY ============================
+     What the console understands lives in the four maps below. To add a
+     command you usually only touch ONE of them (see HOW TO EXTEND, top of file):
+
+       PAGE_CMDS   word -> opens the page  <section id="view-WORD">
+       REDIRECTS   word -> opens an external URL in a new tab
+       INLINE      word -> runs a function that prints into the terminal
+       ALIASES     extra word -> an existing command (synonyms / shortcuts)
+
+     COMMAND_NAMES is just the discovery list used by `ls` and Tab-complete.
+     (INLINE itself is defined lower down, next to the command functions.)
+     ======================================================================== */
+
+        /* (1) MODULE commands — each opens its matching <section id="view-NAME"> page.
+         Add a page -> add  NAME:1  here (and create the <section> in the markup). */
+        var PAGE_CMDS = { about: 1, contacts: 1, specs: 1, credits: 1 };
+
+        /* (2) REDIRECT commands — typing the word opens that URL in a new tab.
+         Add one like:   github:'https://github.com/you',  yt:'https://youtu.be/...'
+         (uncomment the example to try it). */
+        var REDIRECTS = {
+          // github: 'https://github.com/your-name',
+        };
+
+        /* (3) ALIASES — an extra word that maps onto a real command.
+         e.g. rig:'specs' opens the specs page; '?':'help' runs help.
+         Aliases are resolved FIRST, so they work for pages, redirects, inline. */
+        var ALIASES = {
+          "?": "help",
+          man: "help",
+          commands: "help",
+          info: "about",
+          me: "about",
+          bio: "about",
+          contact: "contacts",
+          links: "contacts",
+          find: "contacts",
+          pc: "specs",
+          rig: "specs",
+          hardware: "specs",
+          spec: "specs",
+          neofetch: "specs",
+          thanks: "credits",
+          credit: "credits",
+          cls: "clear",
+          back: "home",
+          exit: "home",
+          "..": "home",
+          menu: "home",
+        };
+
+        /* (4) names shown by `ls` and completed with Tab. Add your new command here
+         so it's discoverable (cosmetic only — the command works regardless). */
+        var COMMAND_NAMES = [
+          "about",
+          "contacts",
+          "specs",
+          "credits",
+          "help",
+          "whoami",
+          "ls",
+          "cd",
+          "cat",
+          "clear",
+          "sl",
+          "cowsay",
+        ];
+
+        /* Tab-completion candidates for a command's ARGUMENT (the 2nd word).
+           cd takes module / dir names; cat takes the full file names from `ls`. */
+        var ARG_COMPLETIONS = {
+          cd: ["about", "contacts", "specs", "credits", ".."],
+          cat: ["about.txt", "contacts.md", "specs.cfg", "credits.log"],
+        };
+
+        function viewEl(name) {
+          return document.getElementById("view-" + name);
+        }
+
+        /* ---------- view switching ----------
+     Shows exactly one <section class="view"> (id="view-"+name), hides the rest,
+     plays the fade, moves focus, and updates the URL hash (#about, etc.) so the
+     page is deep-linkable. 'home' is the terminal view. */
+        function showView(name) {
+          var to = viewEl(name);
+          if (!to || name === currentView) return;
+          var vs = document.querySelectorAll(".view");
+          for (var i = 0; i < vs.length; i++) {
+            vs[i].classList.remove("active", "enter");
+            vs[i].setAttribute("aria-hidden", "true");
+          }
+          to.classList.add("active");
+          to.setAttribute("aria-hidden", "false");
+          void to.offsetWidth;
+          if (!reduce) to.classList.add("enter");
+          currentView = name;
+
+          if (name === "home") {
+            focusCmd();
+          } else {
+            var b = to.querySelector(".back-btn");
+            if (b) {
+              try {
+                b.focus({ preventScroll: true });
+              } catch (e) {}
+            }
+          }
+
+          try {
+            history.replaceState(
+              null,
+              "",
+              name === "home"
+                ? location.pathname + location.search
+                : "#" + name,
+            );
+          } catch (e) {}
+        }
+        function goHome() {
+          showView("home");
+        }
+
+        /* ---------- terminal output ---------- */
+        function termScroll() {
+          if (outEl) {
+            outEl.scrollTop = outEl.scrollHeight;
+          }
+        }
+        function append(html, cls) {
+          var el = document.createElement("div");
+          el.className = "term-block" + (cls ? " " + cls : "");
+          el.innerHTML = html;
+          outEl.appendChild(el);
+          termScroll();
+          return el;
+        }
+        function echo(raw) {
+          append(
+            '<span class="prompt">' +
+              escapeHtml(PROMPT) +
+              "</span> " +
+              escapeHtml(raw),
+            "term-echo",
+          );
+        }
+
+        /* ---------- INLINE (utility) command functions ----------
+     Each prints into the terminal via append(htmlString).
+       • append() inserts HTML — escape user/dynamic text with escapeHtml().
+       • use "\n" for line breaks (the output area is white-space:pre-wrap).
+       • wrap labels in <span class="term-key">…</span> for the dim accent.
+     After writing a function, register it in the INLINE map below. */
+        function cmdHelp() {
+          append(
+            "laptos 1.0 (borya / amd64)\n" +
+              "usage: &lt;command&gt; [args]\n" +
+              "\n" +
+              "a personal bio, served as a fake linux terminal.\n" +
+              "\n" +
+              "modules (open their own page):\n" +
+              '  <span class="term-key">about</span>      who i am + a few facts\n' +
+              '  <span class="term-key">contacts</span>   where you can find me\n' +
+              '  <span class="term-key">specs</span>      my pc\n' +
+              '  <span class="term-key">credits</span>    thanks &amp; credits\n' +
+              "\n" +
+              "utility commands (run here):\n" +
+              '  <span class="term-key">help</span>       show this help\n' +
+              '  <span class="term-key">whoami</span>     info about you (your browser / os)\n' +
+              '  <span class="term-key">ls</span>         list files\n' +
+              '  <span class="term-key">cd</span>         change directory (cd specs, cd ..)\n' +
+              '  <span class="term-key">cat</span>        open a file (cat about.txt)\n' +
+              '  <span class="term-key">clear</span>      clear the screen\n' +
+              '  <span class="term-key">cowsay</span>     a cow says your text\n' +
+              '  <span class="term-key">sl</span>         ?\n' +
+              "\n" +
+              "tip: just start typing &mdash; keystrokes land here. " +
+              "&uarr;/&darr; history &middot; tab autocomplete &middot; ctrl+l clear",
+          );
+        }
+        /* whoami — a playful "who is this client" readout from the browser */
+        function cmdWhoami() {
+          var ua = navigator.userAgent || "";
+          var os = /Windows/.test(ua)
+            ? "Windows"
+            : /Android/.test(ua)
+              ? "Android"
+              : /iPhone|iPad|iPod/.test(ua)
+                ? "iOS"
+                : /Mac OS X|Macintosh/.test(ua)
+                  ? "macOS"
+                  : /Linux/.test(ua)
+                    ? "Linux"
+                    : "unknown";
+          var br = /Edg\//.test(ua)
+            ? "Edge"
+            : /OPR\/|Opera/.test(ua)
+              ? "Opera"
+              : /Firefox\//.test(ua)
+                ? "Firefox"
+                : /Chrome\//.test(ua)
+                  ? "Chrome"
+                  : /Safari\//.test(ua)
+                    ? "Safari"
+                    : "unknown";
+          var tz = "";
+          try {
+            tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+          } catch (e) {}
+          var touch =
+            "ontouchstart" in window || navigator.maxTouchPoints > 0
+              ? "yes"
+              : "no";
+          var rows = [
+            ["user", "guest@laptos (you)"],
+            ["client", br + " on " + os],
+            [
+              "screen",
+              screen.width +
+                " x " +
+                screen.height +
+                "  ·  viewport " +
+                window.innerWidth +
+                " x " +
+                window.innerHeight,
+            ],
+            ["lang", (navigator.language || "?") + (tz ? "  ·  " + tz : "")],
+            [
+              "cores",
+              (navigator.hardwareConcurrency || "?") +
+                " logical  ·  touch " +
+                touch,
+            ],
+          ];
+          append(
+            rows
+              .map(function (r) {
+                return (
+                  '<span class="term-key">' +
+                  r[0] +
+                  "</span>   " +
+                  escapeHtml(r[1])
+                );
+              })
+              .join("\n"),
+          );
+        }
+
+        /* ls — a fake directory listing; `ls -a` reveals the hidden stuff */
+        function cmdLs(args) {
+          var all = (args || []).join("").indexOf("a") !== -1;
+          var files =
+            "about.txt   contacts.md   specs.cfg   credits.log   secrets/";
+          if (all) {
+            append(
+              ".            ..            .bash_history   .secret\n" +
+                files +
+                '\n<span class="term-key">// nothing in secrets/ ... or is there 👀</span>',
+            );
+          } else {
+            append(files);
+          }
+        }
+
+        /* cd — into a real module opens its page; silly dirs get a silly answer */
+        function cmdCd(args) {
+          var dest = (args && args[0] ? args[0] : "")
+            .toLowerCase()
+            .replace(/\/+$/, "");
+          /* home-ish targets -> back to the terminal */
+          if (
+            !dest ||
+            dest === "~" ||
+            dest === "/" ||
+            dest === "." ||
+            dest === ".." ||
+            dest === "home"
+          ) {
+            goHome();
+            return;
+          }
+          /* the locked dir + hidden secret (from `ls` / `ls -a`) */
+          if (dest === "secrets" || dest === ".secret") {
+            append(
+              '<span class="term-err">cd: ' +
+                escapeHtml(dest) +
+                ": permission denied 🔒</span>",
+            );
+            return;
+          }
+          /* the "files" that `ls` lists aren't directories — nudge to the module */
+          var FILES = {
+            "about.txt": "about",
+            "contacts.md": "contacts",
+            "specs.cfg": "specs",
+            "credits.log": "credits",
+          };
+          if (FILES[dest]) {
+            append(
+              '<span class="term-err">cd: ' +
+                escapeHtml(dest) +
+                ": Not a directory</span>\nit's a file — try <span class=\"term-key\">cd " +
+                FILES[dest] +
+                "</span>",
+            );
+            return;
+          }
+          if (dest === ".bash_history") {
+            append(
+              '<span class="term-err">cd: ' +
+                escapeHtml(dest) +
+                ": Not a directory</span>",
+            );
+            return;
+          }
+          /* a real module name opens its page */
+          var d = ALIASES[dest] || dest;
+          if (PAGE_CMDS[d]) {
+            showView(d);
+            return;
+          }
+          append(
+            '<span class="term-err">cd: ' +
+              escapeHtml(dest) +
+              ": No such file or directory</span>",
+          );
+        }
+
+        function cmdClear() {
+          outEl.innerHTML = "";
+        }
+
+        /* cat <file> — like cd, but opens a module by its FULL file name
+           (the names `ls` shows). cat about.txt -> about page, etc. */
+        function cmdCat(args) {
+          var FILES = {
+            "about.txt": "about",
+            "contacts.md": "contacts",
+            "specs.cfg": "specs",
+            "credits.log": "credits",
+          };
+          var name = (args && args[0] ? args[0] : "")
+            .toLowerCase()
+            .replace(/\/+$/, "");
+          if (!name) {
+            append(
+              '<span class="term-err">cat: missing file</span>\nusage: <span class="term-key">cat about.txt</span>  (contacts.md / specs.cfg / credits.log)',
+            );
+            return;
+          }
+          if (FILES[name]) {
+            showView(FILES[name]);
+            return;
+          }
+          if (name === ".bash_history") {
+            /* easter egg: a fake shell history */
+            append("whoami\nls\ncd specs\nsl\ncowsay hi\ncat about.txt\nhelp");
+            return;
+          }
+          if (name === "secrets" || name === ".secret") {
+            append(
+              '<span class="term-err">cat: ' +
+                escapeHtml(name) +
+                ": permission denied 🔒</span>",
+            );
+            return;
+          }
+          /* a bare module name -> remind to type the full file name */
+          var bare = {
+            about: "about.txt",
+            contacts: "contacts.md",
+            specs: "specs.cfg",
+            credits: "credits.log",
+          };
+          var b = bare[ALIASES[name] || name];
+          if (b) {
+            append(
+              '<span class="term-err">cat: ' +
+                escapeHtml(name) +
+                ": No such file or directory</span>\nuse the full name: <span class=\"term-key\">cat " +
+                b +
+                "</span>",
+            );
+            return;
+          }
+          append(
+            '<span class="term-err">cat: ' +
+              escapeHtml(name) +
+              ": No such file or directory</span>",
+          );
+        }
+
+        /* measure how many monospace columns fit across the output area */
+        function termCols() {
+          var probe = document.createElement("span");
+          probe.style.cssText =
+            "position:absolute;visibility:hidden;white-space:pre;";
+          probe.textContent = "0123456789";
+          outEl.appendChild(probe);
+          var cw = probe.getBoundingClientRect().width / 10;
+          outEl.removeChild(probe);
+          return Math.max(16, Math.floor(outEl.clientWidth / (cw || 9)));
+        }
+
+        /* sl — the classic "you typo'd ls" steam locomotive, animated across */
+        function cmdSl() {
+          var TRAIN = [
+            "       .o                                _________",
+            "      . ______          ______________  |         |      _____",
+            "    _()_||__|| ________ |            |  |_________|   __||___||__",
+            "   (         | |      | |            |  |Y_____00_|  |_         _|",
+            "  /-OO----OO**=*OO--OO*=*OO--------OO*=*OO-------OO*=*OO-------OO*=P",
+            "",
+          ];
+          var w = 0;
+          TRAIN.forEach(function (l) {
+            if (l.length > w) w = l.length;
+          });
+          var el = append("");
+          el.style.whiteSpace = "pre";
+          el.style.overflow = "hidden";
+          function render(off) {
+            var pad = off > 0 ? new Array(off + 1).join(" ") : "";
+            var cut = off < 0 ? -off : 0;
+            el.textContent = TRAIN.map(function (l) {
+              return pad + l.slice(cut);
+            }).join("\n");
+          }
+          if (reduce) {
+            render(2);
+            return;
+          }
+          var off = termCols();
+          render(off);
+          var t = setInterval(function () {
+            if (!el.isConnected) {
+              clearInterval(t);
+              return;
+            }
+            off -= 2;
+            if (off <= -w) {
+              clearInterval(t);
+              if (el.parentNode) el.parentNode.removeChild(el);
+              return;
+            }
+            render(off);
+            termScroll();
+          }, 40);
+        }
+
+        /* cowsay [text] — a cow says whatever you type */
+        function cmdCowsay(args) {
+          var text = args && args.length ? args.join(" ") : "mooo";
+          text = text.slice(0, 42);
+          var bar = new Array(text.length + 3).join("_");
+          var dash = new Array(text.length + 3).join("-");
+          var art =
+            " " +
+            bar +
+            "\n" +
+            "< " +
+            text +
+            " >\n" +
+            " " +
+            dash +
+            "\n" +
+            "        \\   ^__^\n" +
+            "         \\  (oo)\\_______\n" +
+            "            (__)\\       )\\/\\\n" +
+            "                ||----w |\n" +
+            "                ||     ||";
+          append(escapeHtml(art));
+        }
+
+        /* INLINE registry: word -> function. Add yours here, e.g.  foo: cmdFoo
+           (functions receive the args array, e.g. cd ["specs"], cowsay ["hi"]) */
+        var INLINE = {
+          help: cmdHelp,
+          whoami: cmdWhoami,
+          ls: cmdLs,
+          cd: cmdCd,
+          cat: cmdCat,
+          clear: cmdClear,
+          sl: cmdSl,
+          cowsay: cmdCowsay,
+        };
+
+        /* ---------- run a typed/clicked command ----------
+     Resolution order (first match wins):
+       ALIASES -> PAGE_CMDS -> REDIRECTS -> home -> INLINE -> "not found".
+     `raw` is the whole input line; only the first word is used as the command
+     (extra words/args are ignored here — read them from clean.split if needed). */
+        function runCmd(raw) {
+          echo(raw); /* print "prompt + typed line" */
+          var trimmed = String(raw).trim();
+          if (trimmed) {
+            cmdHistory.push(trimmed);
+          } /* remember for ↑/↓ history */
+          histPos = cmdHistory.length;
+          draft = "";
+          if (!trimmed) return;
+
+          var clean = trimmed
+            .replace(/^[\/#:!>]+/, "")
+            .trim(); /* allow $/>/# prefixes */
+          var name = clean
+            .split(/\s+/)[0]
+            .toLowerCase(); /* first word, lowercased */
+          name = ALIASES[name] || name; /* resolve synonyms first */
+
+          if (PAGE_CMDS[name]) {
+            showView(name);
+            return;
+          } /* -> open its page  */
+          if (REDIRECTS[name]) {
+            window.open(REDIRECTS[name], "_blank", "noopener");
+            return;
+          } /* -> external URL */
+          if (name === "home") {
+            goHome();
+            return;
+          } /* -> back to terminal */
+          if (INLINE[name]) {
+            INLINE[name](clean.split(/\s+/).slice(1)); /* pass args: cd specs, cowsay hi */
+            termScroll();
+            return;
+          } /* -> print inline   */
+
+          /* nothing matched -> bash-style error */
+          append(
+            '<span class="term-err">' +
+              escapeHtml(clean.split(/\s+/)[0]) +
+              ": command not found</span>\n" +
+              'type <span class="term-key">help</span> for the list of commands',
+          );
+          termScroll();
+        }
+
+        /* ---------- input helpers ---------- */
+        function syncCaret() {
+          if (!fieldEl || !cmdInput) return;
+          if (document.activeElement === cmdInput || cmdInput.value.length) {
+            fieldEl.classList.add("typing");
+          } else {
+            fieldEl.classList.remove("typing");
+          }
+        }
+        function moveCaretEnd() {
+          try {
+            var n = cmdInput.value.length;
+            cmdInput.setSelectionRange(n, n);
+          } catch (e) {}
+        }
+        function clearInput() {
+          if (cmdInput) {
+            cmdInput.value = "";
+            syncCaret();
+          }
+        }
+        function focusCmd(force) {
+          if (!cmdInput) return;
+          if (!force && isCoarse) return;
+          if (document.activeElement === cmdInput) return;
+          if (cmdInput.offsetParent === null)
+            return; /* input hidden (phones) */
+          try {
+            cmdInput.focus({ preventScroll: true });
+          } catch (e) {
+            cmdInput.focus();
+          }
+        }
+
+        /* ---------- history (↑/↓) + tab autocomplete ---------- */
+        function historyPrev() {
+          if (!cmdHistory.length) return;
+          if (histPos === cmdHistory.length) {
+            draft = cmdInput.value;
+          }
+          if (histPos > 0) histPos--;
+          cmdInput.value = cmdHistory[histPos] || "";
+          syncCaret();
+          moveCaretEnd();
+        }
+        function historyNext() {
+          if (histPos >= cmdHistory.length) return;
+          histPos++;
+          cmdInput.value =
+            histPos === cmdHistory.length ? draft : cmdHistory[histPos];
+          syncCaret();
+          moveCaretEnd();
+        }
+        /* shared prefix of a list (case-insensitive; keeps 1st item's casing) */
+        function commonPrefix(arr) {
+          if (!arr.length) return "";
+          var p = arr[0];
+          for (var i = 1; i < arr.length; i++) {
+            while (p && arr[i].toLowerCase().indexOf(p.toLowerCase()) !== 0) {
+              p = p.slice(0, -1);
+            }
+          }
+          return p;
+        }
+
+        /* TAB autocomplete — completes the COMMAND word, or (after a space) the
+           ARGUMENT for commands that take one (cd / cat, see ARG_COMPLETIONS).
+           One match fills it in; several complete the shared prefix and list them. */
+        function autocomplete() {
+          var raw = cmdInput.value;
+          if (!raw.trim()) return; /* empty field -> Tab does nothing (no full list) */
+          var trailingSpace = /\s$/.test(raw);
+          var trimmed = raw.replace(/^\s+/, "");
+          var parts = trimmed.length ? trimmed.split(/\s+/) : [];
+          var completingArg =
+            parts.length > 1 || (parts.length === 1 && trailingSpace);
+
+          var candidates, frag, prefix;
+          if (!completingArg) {
+            /* completing the command word */
+            frag = (parts[0] || "").toLowerCase();
+            candidates = COMMAND_NAMES;
+            prefix = "";
+          } else {
+            /* completing the argument of a known command */
+            var cmd = (parts[0] || "").toLowerCase();
+            cmd = ALIASES[cmd] || cmd;
+            candidates = ARG_COMPLETIONS[cmd];
+            if (!candidates) return;
+            frag = trailingSpace
+              ? ""
+              : (parts[parts.length - 1] || "").toLowerCase();
+            prefix = parts[0] + " ";
+          }
+
+          var m = [];
+          for (var i = 0; i < candidates.length; i++) {
+            if (candidates[i].toLowerCase().indexOf(frag) === 0)
+              m.push(candidates[i]);
+          }
+          if (!m.length) return;
+
+          if (m.length === 1) {
+            /* unique: fill it (commands get a trailing space so you can type args) */
+            cmdInput.value = prefix + m[0] + (completingArg ? "" : " ");
+            syncCaret();
+            moveCaretEnd();
+            return;
+          }
+          /* several: extend to the shared prefix, then echo + list the options */
+          var common = commonPrefix(m);
+          if (common.length > frag.length) {
+            cmdInput.value = prefix + common;
+            syncCaret();
+            moveCaretEnd();
+          }
+          echo(raw.trim());
+          append(m.join("    "));
+        }
+
+        /* ---------- KEYBOARD ----------
+       on a PAGE: esc/backspace/enter -> back to terminal; any printable key
+                  returns to the terminal and starts the command.
+       on HOME : ↑/↓ history · tab autocomplete · enter run · esc clear ·
+                 ctrl+l clear screen · any printable key -> into the console */
+        function onKey(e) {
+          if (!inited) return;
+          var k = e.key;
+
+          if (e.ctrlKey || e.metaKey || e.altKey) {
+            if (
+              e.ctrlKey &&
+              (k === "l" || k === "L") &&
+              currentView === "home"
+            ) {
+              e.preventDefault();
+              cmdClear();
+            }
+            return;
+          }
+
+          if (currentView !== "home") {
+            if (
+              k === "Escape" ||
+              k === "Esc" ||
+              k === "Backspace" ||
+              k === "Enter"
+            ) {
+              e.preventDefault();
+              goHome();
+              return;
+            }
+            if (k && k.length === 1) {
+              goHome();
+              if (cmdInput && cmdInput.offsetParent !== null) {
+                e.preventDefault();
+                focusCmd(true);
+                cmdInput.value += k;
+                syncCaret();
+              }
+            }
+            return;
+          }
+
+          var atInput = document.activeElement === cmdInput;
+          if (k === "ArrowUp") {
+            if (atInput) {
+              e.preventDefault();
+              historyPrev();
+            }
+            return;
+          }
+          if (k === "ArrowDown") {
+            if (atInput) {
+              e.preventDefault();
+              historyNext();
+            }
+            return;
+          }
+          if (k === "Tab") {
+            if (atInput) {
+              e.preventDefault();
+              autocomplete();
+            }
+            return;
+          }
+          if (k === "Escape" || k === "Esc") {
+            clearInput();
+            return;
+          }
+          if (k === "Enter") {
+            return;
+          } /* form submit handles it */
+          if (k && k.length === 1 && !atInput) {
+            if (!cmdInput || cmdInput.offsetParent === null) return;
+            e.preventDefault();
+            focusCmd(true);
+            cmdInput.value += k;
+            syncCaret();
+          }
+        }
+
+        /* ---------- easter-egg reroll (delegated, works on the about page) ---------- */
+        function rerollEgg(w) {
+          var cur = w.textContent,
+            nw;
+          do {
+            nw = EGG[Math.floor(Math.random() * EGG.length)];
+          } while (nw === cur && EGG.length > 1);
+          w.textContent = nw;
+        }
+
+        /* ======================= INIT ======================= */
+        function initApp() {
+          if (inited) return;
+          inited = true;
+
+          outEl = document.getElementById("term-out");
+          cmdInput = document.getElementById("cmd");
+          fieldEl = document.getElementById("cmd-field");
+          isCoarse = !!(
+            window.matchMedia && window.matchMedia("(pointer: coarse)").matches
+          );
+
+          var form = document.getElementById("cmdline");
+          form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            var v = cmdInput.value;
+            cmdInput.value = "";
+            syncCaret();
+            runCmd(v);
+            focusCmd();
+          });
+          cmdInput.addEventListener("focus", syncCaret);
+          cmdInput.addEventListener("blur", syncCaret);
+          cmdInput.addEventListener("input", syncCaret);
+
+          /* clicking the prompt LINE focuses the input (scoped here — no global
+       click-refocus, which used to break text selection / jump the caret) */
+          form.addEventListener("mousedown", function (e) {
+            if (e.target !== cmdInput) {
+              e.preventDefault();
+              focusCmd(true);
+            }
+          });
+
+          syncCaret(); /* set initial caret/width state */
+
+          /* module buttons run their command (open page / print inline) */
+          Array.prototype.forEach.call(
+            document.querySelectorAll(".ql"),
+            function (b) {
+              b.addEventListener("click", function () {
+                runCmd(b.getAttribute("data-cmd"));
+              });
+            },
+          );
+
+          /* back buttons on pages */
+          Array.prototype.forEach.call(
+            document.querySelectorAll("[data-home]"),
+            function (b) {
+              b.addEventListener("click", goHome);
+            },
+          );
+
+          /* easter-egg word (delegated on document so it works on the page).
+       NOTE: we deliberately do NOT refocus the console on arbitrary clicks —
+       that stole focus mid-click and made the caret jump / broke text
+       selection. Typing anywhere still refocuses it (see onKey). */
+          document.addEventListener(
+            "click",
+            function (e) {
+              var w =
+                e.target && e.target.closest
+                  ? e.target.closest(".egg-word")
+                  : null;
+              if (w) {
+                rerollEgg(w);
+              }
+            },
+            false,
+          );
+          document.addEventListener("keydown", function (e) {
+            if (e.key !== "Enter" && e.key !== " " && e.key !== "Spacebar")
+              return;
+            var w =
+              e.target && e.target.closest
+                ? e.target.closest(".egg-word")
+                : null;
+            if (w) {
+              e.preventDefault();
+              rerollEgg(w);
+            }
+          });
+
+          window.addEventListener("keydown", onKey, false);
+
+          focusCmd(); /* console ready to type on load (desktop) */
+
+          /* deep-link: #about / #specs ... opens that page (or runs an inline cmd) */
+          var hash = (location.hash || "").replace("#", "").toLowerCase();
+          if (hash) {
+            var hn = ALIASES[hash] || hash;
+            if (PAGE_CMDS[hn]) {
+              showView(hn);
+            } else if (INLINE[hn]) {
+              INLINE[hn]();
+            }
+          }
+        }
+      })();
+    </script>
+  </body>
 </html>
