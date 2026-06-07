@@ -653,6 +653,16 @@
           letter-spacing: 0.16em;
         }
 
+        /* centre the ASCII wordmark on phones — shrink the <pre> to its content
+           width and centre it as one unit so the box-drawing glyphs stay aligned */
+        .ascii-logo {
+          width: -moz-fit-content;
+          width: fit-content;
+          max-width: 100%;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
         .terminal {
           display: none;
         } /* no terminal at all on phones */
