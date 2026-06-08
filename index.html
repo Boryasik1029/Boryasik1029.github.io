@@ -1719,19 +1719,19 @@
         }
         // 1. Функция
         function cmdSource(args) {
-             append("Redirecting to GitHub");
-    
-             var dots = 0;
-             var interval = setInterval(function() {
-                  dots++;
-                  append(".");
-                  if (dots >= 3) {
-                       clearInterval(interval);
-                       setTimeout(function() {
-                            window.open("https://github.com/yourusername", "_blank");
-                       }, 500);
-                  }
-             }, 500);
+          append("Redirecting to GitHub");
+              
+          var dots = 0;
+          var interval = setInterval(function() {
+               dots++;
+               append(".");
+               if (dots >= 3) {
+                    clearInterval(interval);
+                    setTimeout(function() {
+                         window.open("https://github.com/yourusername", "_blank");
+                    }, 500);
+               }
+          }, 500);
         }
 
         /* cowsay [text] — a cow says whatever you type */
