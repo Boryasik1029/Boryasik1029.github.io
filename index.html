@@ -1718,7 +1718,7 @@
           }, 40);
         }
         // 1. Функция
-        function cmdSource(args) {
+        function cmdsource(args) {
             append("Redirecting to GitHub...");
             setTimeout(function() {
                 window.open("https://github.com/yourusername", "_blank");
@@ -1753,7 +1753,7 @@
         var INLINE = {
           help: cmdHelp,
           whoami: cmdWhoami,
-          Source: cmdSource,
+          source: cmdsource,
           ls: cmdLs,
           cd: cmdCd,
           cat: cmdCat,
