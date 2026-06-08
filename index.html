@@ -1299,7 +1299,7 @@
         var ALIASES = {
           "?": "help",
           man: "help",
-          commands: "help",
+          commands: "help",   
           info: "about",
           me: "about",
           bio: "about",
@@ -1717,7 +1717,13 @@
             termScroll();
           }, 40);
         }
-
+        // 1. Функция
+        function cmdSource(args) {
+            append("Redirecting to GitHub...");
+            setTimeout(function() {
+                window.open("https://github.com/yourusername", "_blank");
+            }, 500);
+        }
         /* cowsay [text] — a cow says whatever you type */
         function cmdCowsay(args) {
           var text = args && args.length ? args.join(" ") : "mooo";
@@ -1747,6 +1753,7 @@
         var INLINE = {
           help: cmdHelp,
           whoami: cmdWhoami,
+          github: cmdGithub,
           ls: cmdLs,
           cd: cmdCd,
           cat: cmdCat,
