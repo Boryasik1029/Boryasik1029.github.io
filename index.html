@@ -1718,12 +1718,22 @@
           }, 40);
         }
         // 1. Функция
-        function cmdsource(args) {
-            append("Redirecting to GitHub...");
-            setTimeout(function() {
-                window.open("https://github.com/laftiq", "_blank");
-            }, 4000);
+        function cmdSource(args) {
+             append("Redirecting to GitHub");
+    
+             var dots = 0;
+             var interval = setInterval(function() {
+                  dots++;
+                  append(".");
+                  if (dots >= 3) {
+                       clearInterval(interval);
+                       setTimeout(function() {
+                            window.open("https://github.com/yourusername", "_blank");
+                       }, 500);
+                  }
+             }, 500);
         }
+
         /* cowsay [text] — a cow says whatever you type */
         function cmdCowsay(args) {
           var text = args && args.length ? args.join(" ") : "mooo";
