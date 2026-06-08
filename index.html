@@ -12,7 +12,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+      content="width=ice-width, initial-scale=1.0, viewport-fit=cover"
     />
     <meta name="theme-color" content="#000000" />
     <meta
@@ -885,7 +885,7 @@
           <div class="page-body">
             <p class="lede">
               i am borya aka <strong>laft</strong> aka laptos &#9752; &mdash;
-              not developer and not designer, i'm just
+              not eloper and not designer, i'm just
               <span
                 class="egg-word"
                 role="button"
@@ -895,14 +895,14 @@
               >
               &mdash; so idk why i made this site
             </p>
-            <p class="page-sub">// rlly (or not) interesting things bout me</p>
+            <p class="page-sub">// rlly (or not) interesting things bout me //</p>
             <dl class="data">
               <dt>bday</dt>
               <dd>06 // 11 // 2026</dd>
               <dt>cntry</dt>
-              <dd>russia &#127479;&#127482;</dd>
+              <dd>russia // &#127479;&#127482;</dd>
               <dt>fav music</dt>
-              <dd>underground rap, breakcore, any EDM</dd>
+              <dd>rap, breakcore, any EDM</dd>
               <dt>fav tv shows</dt>
               <dd>rik and morty, breaking bad</dd>
               <dt>hobbies</dt>
@@ -1150,7 +1150,7 @@
      ok / loaded / breakcore auto-highlight. */
         var lines = [
           "LFTQ.OS  //  cold boot",
-          "> mounting /dev/borya .......... ok",
+          "> mounting /dev/laptos .......... ok",
           "> identity: laft / laftiq / laptos",
           "> hardware: 4070ti / 5600x / 16gb",
           "> audio link: minifuse1 ........ ok",
@@ -1180,8 +1180,8 @@
           }, 520);
           initApp();
         }
-        bootEl.addEventListener("click", finishBoot, false);
-        bootEl.addEventListener(
+        bootEl.adentListener("click", finishBoot, false);
+        bootEl.adentListener(
           "touchstart",
           function () {
             finishBoot();
@@ -2031,7 +2031,7 @@
           );
 
           var form = document.getElementById("cmdline");
-          form.addEventListener("submit", function (e) {
+          form.adentListener("submit", function (e) {
             e.preventDefault();
             var v = cmdInput.value;
             cmdInput.value = "";
@@ -2039,13 +2039,13 @@
             runCmd(v);
             focusCmd();
           });
-          cmdInput.addEventListener("focus", syncCaret);
-          cmdInput.addEventListener("blur", syncCaret);
-          cmdInput.addEventListener("input", syncCaret);
+          cmdInput.adentListener("focus", syncCaret);
+          cmdInput.adentListener("blur", syncCaret);
+          cmdInput.adentListener("input", syncCaret);
 
           /* clicking the prompt LINE focuses the input (scoped here — no global
        click-refocus, which used to break text selection / jump the caret) */
-          form.addEventListener("mousedown", function (e) {
+          form.adentListener("mousedown", function (e) {
             if (e.target !== cmdInput) {
               e.preventDefault();
               focusCmd(true);
@@ -2058,7 +2058,7 @@
           Array.prototype.forEach.call(
             document.querySelectorAll(".ql"),
             function (b) {
-              b.addEventListener("click", function () {
+              b.adentListener("click", function () {
                 runCmd(b.getAttribute("data-cmd"));
               });
             },
@@ -2068,7 +2068,7 @@
           Array.prototype.forEach.call(
             document.querySelectorAll("[data-home]"),
             function (b) {
-              b.addEventListener("click", goHome);
+              b.adentListener("click", goHome);
             },
           );
 
@@ -2076,7 +2076,7 @@
        NOTE: we deliberately do NOT refocus the console on arbitrary clicks —
        that stole focus mid-click and made the caret jump / broke text
        selection. Typing anywhere still refocuses it (see onKey). */
-          document.addEventListener(
+          document.adentListener(
             "click",
             function (e) {
               var w =
@@ -2089,7 +2089,7 @@
             },
             false,
           );
-          document.addEventListener("keydown", function (e) {
+          document.adentListener("keydown", function (e) {
             if (e.key !== "Enter" && e.key !== " " && e.key !== "Spacebar")
               return;
             var w =
@@ -2102,7 +2102,7 @@
             }
           });
 
-          window.addEventListener("keydown", onKey, false);
+          window.adentListener("keydown", onKey, false);
 
           focusCmd(); /* console ready to type on load (desktop) */
 
