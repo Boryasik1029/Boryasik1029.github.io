@@ -1560,13 +1560,30 @@
           }
           /* the locked dir + hidden secret (from `ls` / `ls -a`) */
           if (dest === "secrets" || dest === ".secret") {
-            append(
-              '<span class="term-err">cd: ' +
-                escapeHtml(dest) +
-                ": permission denied 🔒</span>",
-            );
-            return;
+              append("🔒 password required:");
+              var input = document.createElement("div");
+              input.className = "term-block";
+              input.innerHTML = '<span class="prompt">password:</span> <input id="secret-input" type="password" style="background:none;border:none;outline:none;font-family:inherit;font-size:inherit;color:var(--fg-bright);caret-color:var(--fg-bright);width:200px;" />';
+              outEl.appendChild(input);
+              termScroll();
+    
+              var si = document.getElementById("secret-input");
+              si.focus();
+              si.addEventListener("keydown", function(e) {
+                  if (e.key === "Enter") {
+                      var val = si.value;
+                      si.disabled = true;
+                      if (val === "moo") { // <- твой пароль (спрятан в cowsay)
+                          append("🔓 access granted\n\nтут твой секрет");
+                      } else {
+                          append('<span class="term-err">❌ wrong password</span>');
+                      }
+                      focusCmd();
+                  }
+              });
+              return;
           }
+          
           /* the "files" that `ls` lists aren't directories — nudge to the module */
           var FILES = {
             "about.txt": "about",
