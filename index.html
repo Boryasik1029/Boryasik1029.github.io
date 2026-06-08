@@ -12,7 +12,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=ice-width, initial-scale=1.0, viewport-fit=cover"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <meta name="theme-color" content="#000000" />
     <meta
@@ -885,13 +885,13 @@
           <div class="page-body">
             <p class="lede">
               i am borya aka <strong>laft</strong> aka laptos &#9752; &mdash;
-              not eloper and not designer, i'm just
+              not developer and not designer, i'm just
               <span
                 class="egg-word"
                 role="button"
                 tabindex="0"
                 title="click to reroll"
-                >chill</span
+                >nerd</span
               >
               &mdash; so idk why i made this site
             </p>
@@ -1180,8 +1180,8 @@
           }, 520);
           initApp();
         }
-        bootEl.adentListener("click", finishBoot, false);
-        bootEl.adentListener(
+        bootEl.addEventListener("click", finishBoot, false);
+        bootEl.addEventListener(
           "touchstart",
           function () {
             finishBoot();
@@ -2031,7 +2031,7 @@
           );
 
           var form = document.getElementById("cmdline");
-          form.adentListener("submit", function (e) {
+          form.addEventListener("submit", function (e) {
             e.preventDefault();
             var v = cmdInput.value;
             cmdInput.value = "";
@@ -2039,13 +2039,13 @@
             runCmd(v);
             focusCmd();
           });
-          cmdInput.adentListener("focus", syncCaret);
-          cmdInput.adentListener("blur", syncCaret);
-          cmdInput.adentListener("input", syncCaret);
+          cmdInput.addEventListener("focus", syncCaret);
+          cmdInput.addEventListener("blur", syncCaret);
+          cmdInput.addEventListener("input", syncCaret);
 
           /* clicking the prompt LINE focuses the input (scoped here — no global
        click-refocus, which used to break text selection / jump the caret) */
-          form.adentListener("mousedown", function (e) {
+          form.addEventListener("mousedown", function (e) {
             if (e.target !== cmdInput) {
               e.preventDefault();
               focusCmd(true);
@@ -2058,7 +2058,7 @@
           Array.prototype.forEach.call(
             document.querySelectorAll(".ql"),
             function (b) {
-              b.adentListener("click", function () {
+              b.addEventListener("click", function () {
                 runCmd(b.getAttribute("data-cmd"));
               });
             },
@@ -2068,7 +2068,7 @@
           Array.prototype.forEach.call(
             document.querySelectorAll("[data-home]"),
             function (b) {
-              b.adentListener("click", goHome);
+              b.addEventListener("click", goHome);
             },
           );
 
@@ -2076,7 +2076,7 @@
        NOTE: we deliberately do NOT refocus the console on arbitrary clicks —
        that stole focus mid-click and made the caret jump / broke text
        selection. Typing anywhere still refocuses it (see onKey). */
-          document.adentListener(
+          document.addEventListener(
             "click",
             function (e) {
               var w =
@@ -2089,7 +2089,7 @@
             },
             false,
           );
-          document.adentListener("keydown", function (e) {
+          document.addEventListener("keydown", function (e) {
             if (e.key !== "Enter" && e.key !== " " && e.key !== "Spacebar")
               return;
             var w =
@@ -2102,7 +2102,7 @@
             }
           });
 
-          window.adentListener("keydown", onKey, false);
+          window.addEventListener("keydown", onKey, false);
 
           focusCmd(); /* console ready to type on load (desktop) */
 
