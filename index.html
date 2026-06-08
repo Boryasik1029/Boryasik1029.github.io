@@ -1566,14 +1566,17 @@
               input.innerHTML = '<span class="prompt">password:</span> <input id="secret-input" type="password" style="background:none;border:none;outline:none;font-family:inherit;font-size:inherit;color:var(--fg-bright);caret-color:var(--fg-bright);width:200px;" />';
               outEl.appendChild(input);
               termScroll();
-    
+
+              cmdInput.disabled = true; // <- блокируем основной инпут
+
               var si = document.getElementById("secret-input");
-              si.focus();
+              setTimeout(function() { si.focus(); }, 50);
               si.addEventListener("keydown", function(e) {
                   if (e.key === "Enter") {
                       var val = si.value;
                       si.disabled = true;
-                      if (val === "moo") { // <- твой пароль (спрятан в cowsay)
+                      cmdInput.disabled = false; // <- разблокируем
+                      if (val === "moo") {
                           append("🔓 access granted\n\nтут твой секрет");
                       } else {
                           append('<span class="term-err">❌ wrong password</span>');
