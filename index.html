@@ -1560,30 +1560,11 @@
           }
           /* the locked dir + hidden secret (from `ls` / `ls -a`) */
           if (dest === "secrets" || dest === ".secret") {
-              append("🔒 password required:");
-              var input = document.createElement("div");
-              input.className = "term-block";
-              input.innerHTML = '<span class="prompt">password:</span> <input id="secret-input" type="password" style="background:none;border:none;outline:none;font-family:inherit;font-size:inherit;color:var(--fg-bright);caret-color:var(--fg-bright);width:200px;" />';
-              outEl.appendChild(input);
-              termScroll();
-
-              cmdInput.disabled = true; // <- блокируем основной инпут
-
-              var si = document.getElementById("secret-input");
-              setTimeout(function() { si.focus(); }, 50);
-              si.addEventListener("keydown", function(e) {
-                  if (e.key === "Enter") {
-                      var val = si.value;
-                      si.disabled = true;
-                      cmdInput.disabled = false; // <- разблокируем
-                      if (val === "moo") {
-                          append("🔓 access granted\n\nтут твой секрет");
-                      } else {
-                          append('<span class="term-err">❌ wrong password</span>');
-                      }
-                      focusCmd();
-                  }
-              });
+              append(
+                '<span class="term-err">cd: ' +
+                  escapeHtml(dest) +
+                  ": permission denied 🔒</span>",
+              );
               return;
           }
           
